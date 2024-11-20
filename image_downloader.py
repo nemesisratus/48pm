@@ -11,7 +11,7 @@ import mimetypes
 # Set paths relative to the current script's directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
 media_path = os.path.join(current_dir, "media")
-folder_path = os.path.join(current_dir, "json2")
+folder_path = os.path.join(current_dir, "temp")
 
 # Ensure media directory exists
 os.makedirs(media_path, exist_ok=True)
