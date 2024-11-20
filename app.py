@@ -1,7 +1,9 @@
-# First, run these commands in separate cells:
+# First run this in a separate cell:
 # !pip install flask-ngrok pyngrok pillow
-# !ngrok authtoken YOUR_NGROK_TOKEN  # Replace with your ngrok token
-# !git clone YOUR_GITHUB_REPO_URL    # Replace with your repo URL
+
+# Then run this in another cell:
+# from pyngrok import ngrok
+# ngrok.set_auth_token("2p6Rz5FRIs3ClT7xSe5gDiq7imF_4rCeX19DifHmecXPP7RAA")
 
 import os
 import json
@@ -10,15 +12,17 @@ from flask import Flask, render_template, request, jsonify, send_from_directory
 from PIL import Image
 import hashlib
 from urllib.parse import urlparse
-from flask_ngrok import run_with_ngrok
 from pyngrok import ngrok
 
 app = Flask(__name__)
-run_with_ngrok(app)
 
-# Assuming your GitHub repo is cloned to /content/your-repo-name
-# Replace 'your-repo-name' with your actual repository name
-REPO_PATH = "/content/your-repo-name"  # Update this with your repo name
+# Setup ngrok
+port = 5000
+public_url = ngrok.connect(port).public_url
+print(f' * Public URL: {public_url}')
+
+# Rest of your configuration
+REPO_PATH = "/content/pm"  # Your repository path
 
 # Set up paths relative to the repository
 def setup_directories():
@@ -144,4 +148,5 @@ if __name__ == '__main__':
         if not os.path.exists(dir_path):
             print(f"Warning: {dir_name} directory not found at {dir_path}")
     
-    app.run()
+    # Run the app
+    app.run(port=port)
