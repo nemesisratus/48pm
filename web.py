@@ -4,10 +4,18 @@ from datetime import datetime, timezone
 from flask import Flask, render_template, request, jsonify, send_from_directory
 from PIL import Image
 import hashlib
+from urllib.parse import urlparse
+from flask_ngrok import run_with_ngrok  # Add this import
+from pyngrok import ngrok
+
 
 from urllib.parse import urlparse
 
 app = Flask(__name__)
+run_with_ngrok(app)  # Add ngrok
+port = 5000
+public_url = ngrok.connect(port)
+print(f' * Public URL: {public_url}')  # Add this line to integrate ngrok
 
 # Set paths relative to the current script's directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -112,5 +120,4 @@ def serve_avatar(filename):
     return send_from_directory(avatar_path, filename)
 
 if __name__ == '__main__':
-   
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(port=port)
