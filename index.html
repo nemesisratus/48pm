@@ -60,6 +60,9 @@
         const IMAGE_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.gif', '.webp'];
         const AUDIO_EXTENSIONS = ['.mp3', '.wav', '.ogg'];
 
+        // Define channels in the code
+        const CHANNELS = ['channel1', 'channel2'];
+
         // DOM Elements
         const channelFilter = document.getElementById('channel-filter');
         const mediaContainer = document.getElementById('media-container');
@@ -72,9 +75,8 @@
             return filename.substring(filename.lastIndexOf('.')).toLowerCase();
         }
 
-        // Function to load media for a specific channel
+        // Function to load media for a channel
         async function loadChannelMedia(channelId) {
-            // Fetch all files in the channel directory
             const channelPath = `${MEDIA_BASE_PATH}${channelId}/`;
             
             try {
@@ -104,42 +106,25 @@
             }
         }
 
-        // Populate media configuration for all channels
-        async function populateMediaConfig() {
-            try {
-                // Fetch channel directories
-                const response = await fetch(MEDIA_BASE_PATH);
-                const text = await response.text();
-                
-                // Parse directory listing
-                const parser = new DOMParser();
-                const doc = parser.parseFromString(text, 'text/html');
-                const channelLinks = Array.from(doc.querySelectorAll('a'))
-                    .map(a => a.href)
-                    .filter(href => href.includes('/') && href.split('/').filter(Boolean).length === 2);
-                
-                // Load media for each channel
-                const channelMediaPromises = channelLinks.map(channelLink => {
-                    const channelId = channelLink.split('/').filter(Boolean)[1];
-                    
-                    // Populate channel dropdown
-                    const option = document.createElement('option');
-                    option.value = channelId;
-                    option.textContent = channelId;
-                    channelFilter.appendChild(option);
-                    
-                    // Load media for this channel
-                    return loadChannelMedia(channelId);
-                });
+        // Populate channel dropdown and load media
+        async function initializeChannels() {
+            // Populate channel dropdown and load media
+            const loadPromises = CHANNELS.map(async (channelId) => {
+                // Add to channel filter
+                const option = document.createElement('option');
+                option.value = channelId;
+                option.textContent = channelId;
+                channelFilter.appendChild(option);
 
-                // Wait for all channels to load
-                await Promise.all(channelMediaPromises);
+                // Load media for the channel
+                await loadChannelMedia(channelId);
+            });
 
-                // Initial render
-                renderMedia();
-            } catch (error) {
-                console.error('Error populating media config:', error);
-            }
+            // Wait for all channels to load
+            await Promise.all(loadPromises);
+
+            // Initial render
+            renderMedia();
         }
 
         // Render media
@@ -201,7 +186,7 @@
         });
 
         // Initialize
-        populateMediaConfig();
+        initializeChannels();
     </script>
 </body>
 </html>
