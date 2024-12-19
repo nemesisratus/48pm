@@ -460,69 +460,69 @@
         flatpickr("#end_date", {});
 
         function loadMessages() {
-    fetch('static_messages.json')
-        .then(response => response.json())
-        .then(data => {
-            $("#messages").empty();
+            fetch('static_messages.json')
+               .then(response => response.json())
+               .then(data => {
+                   $("#messages").empty();
             
             // Filter messages based on selected criteria
-            const startDate = new Date($("#start_date").val());
-            const endDate = new Date($("#end_date").val());
-            const selectedChannel = $("#channel").val();
-            const selectedMediaType = $("#mediaTypeFilter").val();
+                   const startDate = new Date($("#start_date").val());
+                   const endDate = new Date($("#end_date").val());
+                   const selectedChannel = $("#channel").val();
+                   const selectedMediaType = $("#mediaTypeFilter").val();
 
             data.forEach(function(message) {
-                const messageDate = new Date(message.timestamp);
+                   const messageDate = new Date(message.timestamp);
 
                 // Filter by date range
-                if (messageDate >= startDate && messageDate <= endDate) {
+                   if (messageDate >= startDate && messageDate <= endDate) {
                     // Filter by channel
-                    if (selectedChannel === "All" || message.channel_id === selectedChannel) {
+                       if (selectedChannel === "All" || message.channel_id === selectedChannel) {
                         // Filter by media type
-                        if (selectedMediaType === "all" || selectedMediaType === message.media_type) {
-                            let messageHtml = `
-                                <div class="message">
-                                    <div class="message-header">
-                                        <div class="message-avatar">
-                                            <img src="images/avatars/${getChannelName(message.channel_id)}.jpg" 
-                                                alt="${getChannelName(message.channel_id)}"
-                                                onerror="this.onerror=null; this.src='images/avatars/default.jpg';">
-                                        </div>
-                                        <div class="message-info">
-                                            <div class="message-author">${getChannelName(message.channel_id)}</div>
-                                            <div class="message-timestamp">${formatDate(message.timestamp)}</div>
-                                        </div>
-                                    </div>`;
+                           if (selectedMediaType === "all" || selectedMediaType === message.media_type) {
+                               let messageHtml = `
+                                   <div class="message">
+                                       <div class="message-header">
+                                           <div class="message-avatar">
+                                               <img src="images/avatars/${getChannelName(message.channel_id)}.jpg" 
+                                                   alt="${getChannelName(message.channel_id)}"
+                                                   onerror="this.onerror=null; this.src='images/avatars/default.jpg';">
+                                           </div>
+                                           <div class="message-info">
+                                               <div class="message-author">${getChannelName(message.channel_id)}</div>
+                                               <div class="message-timestamp">${formatDate(message.timestamp)}</div>
+                                           </div>
+                                       </div>`;
                             
-                            if (message.content) {
+                               if (message.content) {
                                 messageHtml += `<div class="message-content">${message.content}</div>`;
-                            }
-                            if (message.url) {
-                                if (message.media_type === "image") {
-                                    messageHtml += `
+                               }
+                               if (message.url) {
+                                   if (message.media_type === "image") {
+                                     messageHtml += `
                                         <div class="message-attachment">
                                             <img src="${message.url}" onclick="showFullImage(this.src)" 
                                                 loading="lazy" alt="Attached image">
                                         </div>`;
-                                } else if (message.media_type === "audio") {
-                                    messageHtml += `
+                                   } else if (message.media_type === "audio") {
+                                     messageHtml += `
                                         <div class="message-attachment">
                                             <audio controls>
                                                 <source src="${message.url}" type="audio/mpeg">
                                                 Your browser does not support the audio element.
                                             </audio>
                                         </div>`;
-                                }
-                            }
-                            messageHtml += '</div>';
-                            $("#messages").append(messageHtml);
-                        }
-                    }
-                }
-            });
-        })
-        .catch(error => console.error("Error loading messages:", error));
-}
+                                   }
+                               }
+                               messageHtml += '</div>';
+                               $("#messages").append(messageHtml);
+                           }
+                       }
+                   }
+               });
+           })
+           .catch(error => console.error("Error loading messages:", error));
+   }
   
         // Helper function to get initials from name
         function getInitials(name) {
